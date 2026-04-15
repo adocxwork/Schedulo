@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta, timezone, time
 from sqlalchemy.orm import Session
-from .database import SessionLocal
+from .database import get_session_local
 from . import models
 
 
 def seed():
-    db: Session = SessionLocal()
+    db: Session = get_session_local()()
     try:
         # Check if already seeded
         if db.query(models.EventType).count() > 0:

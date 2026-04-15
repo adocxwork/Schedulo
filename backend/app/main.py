@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .database import engine
+from .database import get_engine
 from . import models
 from .routers import event_types, availability, bookings
 from .seed import seed
@@ -28,7 +28,8 @@ app.include_router(bookings.router)
 
 @app.on_event("startup")
 def startup_event():
-    # Create all tables on startup
+    # Initialize database connection and create tables
+    engine = get_engine()
     models.Base.metadata.create_all(bind=engine)
     # Run seed data
     seed()

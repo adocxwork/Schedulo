@@ -10,8 +10,23 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set. Please configure your database connection.")
 
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Lazy engine creation - only create when first accessed
+_engine = None
+_SessionLocal = None
+
+
+def get_engine():
+    global _engine
+    if _engine is None:
+        _engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+    return _engine
+
+
+def get_session_local():
+    global _SessionLocal
+    if _SessionLocal is None:
+        _SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=get_engine())
+    return _SessionLocal
 
 
 class Base(DeclarativeBase):
@@ -19,8 +34,9 @@ class Base(DeclarativeBase):
 
 
 def get_db():
-    db = SessionLocal()
+    db = get_session_local()()
     try:
         yield db
     finally:
         db.close()
+
