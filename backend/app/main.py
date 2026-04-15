@@ -6,12 +6,6 @@ from . import models
 from .routers import event_types, availability, bookings
 from .seed import seed
 
-# Create all tables
-models.Base.metadata.create_all(bind=engine)
-
-# Run seed data
-seed()
-
 app = FastAPI(
     title="Schedulo API",
     description="A Calendly-clone scheduling platform API",
@@ -30,6 +24,14 @@ app.add_middleware(
 app.include_router(event_types.router)
 app.include_router(availability.router)
 app.include_router(bookings.router)
+
+
+@app.on_event("startup")
+def startup_event():
+    # Create all tables on startup
+    models.Base.metadata.create_all(bind=engine)
+    # Run seed data
+    seed()
 
 
 @app.get("/")
