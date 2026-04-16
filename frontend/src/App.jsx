@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import { ToastContainer } from './components/Toast';
@@ -12,9 +13,26 @@ import './index.css';
 
 // Layout for admin pages (with sidebar)
 function AdminLayout({ children }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <div className="app-layout">
-      <Sidebar />
+      {/* Mobile Top Header */}
+      <div className="mobile-header">
+        <div className="mobile-header-logo" onClick={() => window.location.href = '/'}>
+          <div className="logo-icon">S</div>
+          <span className="logo-text">Schedulo</span>
+        </div>
+        <button 
+          className="mobile-menu-btn"
+          onClick={() => setIsMobileMenuOpen(true)}
+          aria-label="Open Menu"
+        >
+          ☰
+        </button>
+      </div>
+
+      <Sidebar isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
       <main className="main-content">
         {children}
       </main>

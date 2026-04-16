@@ -6,9 +6,11 @@ const navItems = [
   { to: '/meetings', icon: '📋', label: 'Meetings' },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   return (
-    <aside className="sidebar">
+    <>
+      {isOpen && <div className="sidebar-overlay" onClick={onClose} />}
+      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       {/* Logo */}
       <NavLink to="/" className="sidebar-logo" style={{ textDecoration: 'none' }}>
         <div className="logo-icon">S</div>
@@ -30,6 +32,7 @@ export default function Sidebar() {
           <NavLink
             key={item.to}
             to={item.to}
+            onClick={onClose}
             className={({ isActive }) => `sidebar-nav-item${isActive ? ' active' : ''}`}
           >
             <span className="nav-icon">{item.icon}</span>
@@ -38,5 +41,6 @@ export default function Sidebar() {
         ))}
       </nav>
     </aside>
+    </>
   );
 }
